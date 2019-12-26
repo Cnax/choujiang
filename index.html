@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+      .box {
+        margin: 10px auto;
+        display: flex;
+        flex-wrap: wrap;
+        width: 300px;
+        height: 300px;
+        position: relative;
+      }
+      .box .item {
+        box-sizing: border-box;
+        width: 100px;
+        text-align: center;
+        line-height: 100px;
+        background: #fff;
+        border: 0;
+        padding: 0;
+      }
+      .box .spin {
+        box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        background-color: rgba(0,0,0,.2);
+      }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="title">圣诞抽抽乐</div>
+        <div class="box">
+            <div class="item">我爱你</div>
+            <div class="item">你爱我</div>
+            <div class="item">我不爱你</div>
+            <div class="item">你爱我</div>
+            <button class="item" onclick="start(this)">开始</button>
+            <div class="item">你爱我</div>
+            <div class="item">再见</div>
+            <div class="item">谢谢惠顾</div>
+            <div class="item">你爱我</div>
+            <div class="spin"></div>
+        </div>
+    </div>
+    <script>
+        /**
+        * 生成n维环形坐标
+        * @param {number} n 维度
+        * @param {number} cell 单位坐标长度
+        */
+        function generateCirclePath(n, cell) {
+            let arr = []
+            for(let i=0; i< n; i++) {
+                arr.push([i*cell, 0])
+            }
+            for(let i=0; i< n-1; i++) {
+                arr.push([(n-1)*cell, (i+1)*cell])
+            }
+            for(let i=0; i< n-1; i++) {
+                arr.push([(n-i-2)*cell, (n-1)*cell])
+            }
+            for(let i=0; i< n-2; i++) {
+                arr.push([0, (n-i-2)*cell])
+            }
+            return arr
+        }
+        function run (el, path, cn = 3, speed = 150, cb) {
+            let len = path.length
+            // 起点
+            let i = 0
+            // 随机一个终点
+            const finalPos = (cn - 1) * len + Math.floor(Math.random() * len) - 1
+            const timer = setInterval(() => {
+                if(i === finalPos) {
+                    clearInterval(timer)
+                    cb && cb()
+                }
+                const [x, y] = path[i % len]
+                el.style.transform = `translate(${x}px, ${y}px)`
+                i++
+            }, speed)
+        }
+        function start(self) {
+            const el = document.querySelector('.spin')
+            const path = generateCirclePath(3, 100)
+            self.disabled = true
+            run(el, path, 5, 150, () => {
+                self.disabled = false
+            })
+        }
+    </script>   
+</body>
+</html>
